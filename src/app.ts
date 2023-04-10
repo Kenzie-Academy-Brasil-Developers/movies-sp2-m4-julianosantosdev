@@ -4,9 +4,10 @@ import {
   createMovie,
   deleteMovie,
   listAllMovies,
-  listMoviesByID,
+  listMovieByID,
   updateMovie,
 } from './logic';
+import { verifyIfMovieExists, verifyIfNameExists } from './middlewares';
 
 /* --------------------------------- SERVER SETTINGS --------------------------------- */
 const listeningPort = 3000;
@@ -19,8 +20,8 @@ app.listen(listeningPort, async () => {
 app.use(json());
 
 /* --------------------------------- ROUTES --------------------------------- */
-app.post('/movies', createMovie);
+app.post('/movies', verifyIfNameExists, createMovie);
 app.get('/movies', listAllMovies);
-app.get('/movies/:id', listMoviesByID);
-app.patch('/movies/:id', updateMovie);
-app.delete('movies/:id', deleteMovie);
+app.get('/movies/:id', verifyIfMovieExists, listMovieByID);
+app.patch('/movies/:id', verifyIfMovieExists, verifyIfNameExists, updateMovie);
+app.delete('/movies/:id', verifyIfMovieExists, deleteMovie);

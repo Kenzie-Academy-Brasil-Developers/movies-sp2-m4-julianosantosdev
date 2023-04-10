@@ -37,7 +37,6 @@ const listAllMovies = async (
   response: Response
 ): Promise<Response> => {
   const queryParam = request.query.category;
-  console.log(queryParam)
 
   const verifyCategory: string = format(`
     SELECT
@@ -54,7 +53,6 @@ const listAllMovies = async (
   };
 
   const queryReturn: QueryResult<IMovie> = await client.query(queryConfig);
-  console.log(queryReturn.rowCount)
 
   if (queryReturn.rowCount > 0) {
     return response.status(200).json(queryReturn.rows);

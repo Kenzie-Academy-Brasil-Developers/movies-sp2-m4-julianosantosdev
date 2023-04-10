@@ -76,8 +76,37 @@ const listMovieByID = (request: Request, response: Response): Response => {
 };
 
 /* ---------------------------------- PATCH ---------------------------------- */
-const updateMovie = (request: Request, response: Response): Response => {
-  return response.json('funcionando').send();
+const updateMovie = async (
+  request: Request,
+  response: Response
+): Promise<Response | void> => {
+  const idMovie = response.locals.id;
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { id, ...moviesRest }: Partial<IMovie> = request.body;
+
+  const queryString: string = format(
+    `
+    UPDATE
+      movies
+    SET 
+      (%I) = ROW (%L)
+    WHERE
+      id = $1
+    RETURNING *;
+  `,
+    Object.keys(moviesRest),
+    Object.values(moviesRest)
+  );
+
+  const queryConfig: QueryConfig = {
+    text: queryString,
+    values: [idMovie],
+  };
+
+  const queryReturn: QueryResult = await client.query(queryConfig);
+
+  return response.status(200).json(queryReturn.rows[0]);
 };
 
 /* --------------------------------- DELETE --------------------------------- */

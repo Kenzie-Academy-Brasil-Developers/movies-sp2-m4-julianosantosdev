@@ -37,35 +37,39 @@ const listAllMovies = async (
   response: Response
 ): Promise<Response> => {
   const queryParam = request.query.category;
+  console.log(queryParam)
 
-  if (queryParam === 'Animação') {
-    const queryString: string = `
-      SELECT
-        *
-      FROM
-        movies
-      WHERE
-        category = $1
-    ;`;
+  const verifyCategory: string = format(`
+    SELECT
+      *
+    FROM
+      movies
+    WHERE
+      category = $1
+  `);
 
-    const queryConfig: QueryConfig = {
-      text: queryString,
-      values: [queryParam],
-    };
+  const queryConfig: QueryConfig = {
+    text: verifyCategory,
+    values: [queryParam],
+  };
 
-    const queryReturn: QueryResult<IMovie> = await client.query(queryConfig);
+  const queryReturn: QueryResult<IMovie> = await client.query(queryConfig);
+  console.log(queryReturn.rowCount)
+
+  if (queryReturn.rowCount > 0) {
     return response.status(200).json(queryReturn.rows);
-  }
-
-  const queryString: string = `
+  } else {
+    const queryString: string = `
     SELECT 
       * 
     FROM 
       movies;
-  `;
+    `;
 
-  const queryReturn: QueryResult<IMovie> = await client.query(queryString);
-  return response.status(200).json(queryReturn.rows);
+    const queryReturn: QueryResult<IMovie> = await client.query(queryString);
+
+    return response.status(200).json(queryReturn.rows);
+  }
 };
 
 /* -------------------------------- GET BY ID ------------------------------- */

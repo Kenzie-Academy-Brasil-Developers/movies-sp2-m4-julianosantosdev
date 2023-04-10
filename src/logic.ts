@@ -106,7 +106,7 @@ const updateMovie = async (
     values: [idMovie],
   };
 
-  const queryReturn: QueryResult = await client.query(queryConfig);
+  const queryReturn: QueryResult<IMovie> = await client.query(queryConfig);
 
   return response.status(200).json(queryReturn.rows[0]);
 };

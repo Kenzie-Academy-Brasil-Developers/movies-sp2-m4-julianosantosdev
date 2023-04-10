@@ -61,7 +61,7 @@ const verifyIfNameExists = async (
     values: [movie.name],
   };
 
-  const QueryReturn: QueryResult = await client.query(queryConfig);
+  const QueryReturn: QueryResult<IMovie> = await client.query(queryConfig);
 
   if (QueryReturn.rowCount > 0) {
     return response.status(409).json({ error: 'Movie name already exists!' });
